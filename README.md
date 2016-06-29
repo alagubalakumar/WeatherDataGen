@@ -3,7 +3,7 @@ Project to generate test data
 
 To build the project 
 
-cd WeatherDataGen
+cd WeatherDataGen \n
 mvn package
 
 after build success -> WeatherGenData-1.0-jar-with-dependencies.jar will be generated
