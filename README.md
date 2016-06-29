@@ -2,6 +2,7 @@
 Project to generate test data
 
 Commands to generate real time forecast data
+
 java -jar WeatherGenData-1.0-jar-with-dependencies.jar -f <directory path> -m false
 
 Example:
@@ -13,6 +14,7 @@ The above command will connect to openweathermap api and gather 16 days data of 
 
 
 Second way to generate mock data is
+
 java -jar WeatherGenData-1.0-jar-with-dependencies.jar -c 200 -f <directory path> -sd <start date> -ed <end date> -m true
 
 Example:
