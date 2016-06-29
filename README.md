@@ -1,6 +1,14 @@
 # WeatherDataGen
 Project to generate test data
 
+To build the project 
+
+cd WeatherDataGen
+mvn package
+
+after build success -> WeatherGenData-1.0-jar-with-dependencies.jar will be generated
+
+
 Commands to generate real time forecast data
 
 java -jar WeatherGenData-1.0-jar-with-dependencies.jar -f [directory path] -m false
