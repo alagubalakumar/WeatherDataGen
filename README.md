@@ -7,6 +7,10 @@ cd WeatherDataGen
 
 mvn package
 
+To run the junit testcase 
+
+mvn -Dtest=*Test test
+
 after build success -> WeatherGenData-1.0-jar-with-dependencies.jar will be generated
 
 
@@ -33,3 +37,7 @@ date format to use dd-MM-yyyy
 Example:
 
 java -jar WeatherGenData-1.0-jar-with-dependencies.jar -c 200 -f "E:\\MyApps" -sd "01-01-2016" -ed "29-06-2016" -r true
+
+
+
+
