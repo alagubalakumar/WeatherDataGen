@@ -24,8 +24,9 @@ public class CliRunner {
 	private Date startdate;
 	private Date enddate;
 	private boolean isMock = false;
+	private IWeatherGenerator weatherGenerator;
 
-	public CliRunner(String[] args) {
+	public CliRunner(String[] args) throws IOException, java.text.ParseException {
 		this.args = args;
 		options.addOption("h", "help", false, "show help.");
 		options.addOption("f", "outputfile", true, "Here you can set the outputfile");
@@ -35,11 +36,14 @@ public class CliRunner {
 		options.addOption("r", "realtime", true,
 				"set it to true|false to generate mock data or real time data.by default it is false");
 
+		parse();
+		
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException, java.text.ParseException {
 		log.log(Level.INFO, "Parsing the arguments");
-		new CliRunner(args).parse();
+		CliRunner runner = new CliRunner(args);
+		runner.generateData();
 	}
 
 	/***
@@ -49,7 +53,7 @@ public class CliRunner {
 	 * @throws InterruptedException
 	 * @throws java.text.ParseException
 	 */
-	public void parse() throws IOException, InterruptedException, java.text.ParseException {
+	public void parse() throws IOException, java.text.ParseException {
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
 		try {
@@ -67,8 +71,6 @@ public class CliRunner {
 				isMock = Boolean.valueOf(cmd.getOptionValue("r"));
 			}
 
-			log.log(Level.INFO, "Done parsing the args..Started to generate data");
-			
 				if(isMock){
 					if (cmd.hasOption("c")) {
 						recordcount = Integer.valueOf(checkNull(cmd.getOptionValue("c")));
@@ -81,29 +83,28 @@ public class CliRunner {
 					if (cmd.hasOption("ed")) {
 						enddate = dateFormater.parse(checkNull(cmd.getOptionValue("ed")));
 					}
-					if ((recordcount != 0) && (startdate != null) && (enddate != null)) {
-					// Calling the mock weather data generator
-					WeatherDataGenerator mockGenerator = new WeatherDataGenerator();
-					mockGenerator.generateData(outputfile, recordcount, startdate, enddate);
-					}else{
-						help();
+					if ((recordcount == 0) || (startdate == null) || (enddate == null)) {
+				         help();
 					}
+				} 
 				
-				} else {
-					RealTimeGenerator realTimeGenerator = new RealTimeGenerator();
-					realTimeGenerator.getData(outputfile);
-				}
-				log.log(Level.INFO, "Completed..");
 		} catch (ParseException e) {
 			log.log(Level.SEVERE, "Failed to parse comand line properties", e);
 			help();
 		}
 	}
 	
+	public boolean generateData(){
+		weatherGenerator = WeatherGeneratorFactory.getGenerator(isMock, outputfile, recordcount, startdate, enddate);
+		return weatherGenerator.generateData();
+		
+	}
+	
 	private String checkNull(String val){
-		if(val == null){
+		if((val == null) || (("").equalsIgnoreCase(val))){
 			help();
-		}
+		}	
+		
 		return val;
 	}
 
@@ -115,5 +116,37 @@ public class CliRunner {
 		HelpFormatter formater = new HelpFormatter();
 		formater.printHelp("Main", options);
 		System.exit(0);
+	}
+
+	public String getOutputfile() {
+		return outputfile;
+	}
+
+	public int getRecordcount() {
+		return recordcount;
+	}
+
+	public Date getStartdate() {
+		return startdate;
+	}
+
+	public Date getEnddate() {
+		return enddate;
+	}
+
+	public boolean isMock() {
+		return isMock;
+	}
+
+	public String[] getArgs() {
+		return args;
+	}
+
+	public Options getOptions() {
+		return options;
+	}
+
+	public IWeatherGenerator getWeatherGenerator() {
+		return weatherGenerator;
 	}
 }
